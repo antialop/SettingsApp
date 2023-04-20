@@ -12,8 +12,11 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.settingsactivity.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 //Delegado. Crear una unica instancia de la base de datos
@@ -27,10 +30,26 @@ class MainActivity : AppCompatActivity() {
         const val KEY_DARK_MODE = "key_dark_mode"
     }
     private lateinit var binding: ActivityMainBinding
+    private var firstTime:Boolean = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            getSettings().filter { firstTime }.collect { settingsModel ->
+                if (settingsModel != null) {
+                    runOnUiThread {
+                        binding.switchVibration.isChecked = settingsModel.vibration
+                        binding.switchBluetooth.isChecked = settingsModel.bluetooth
+                        binding.switchDarkMode.isChecked = settingsModel.darkMode
+                        binding.rsVolume.setValues(settingsModel.volume.toFloat())
+                        firstTime = !firstTime
+                    }
+                }
+            }
+        }
+
         initUI()
     }
 
@@ -72,4 +91,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun getSettings(): Flow<SettingsModel?> {
+        return dataStore.data.map { preferences ->
+            SettingsModel(
+                volume = preferences[intPreferencesKey(VOLUME_LVL)] ?: 50,
+                bluetooth = preferences[booleanPreferencesKey(KEY_BLUETOOTH)] ?: true,
+                darkMode = preferences[booleanPreferencesKey(KEY_DARK_MODE)] ?: false,
+                vibration = preferences[booleanPreferencesKey(KEY_VIBRATION)] ?: true
+            )
+        }
+    }
+    /*
+    Obtiene los valores de preferencias almacenados en el DataStore y los transforma en un objeto
+    de modelo de configuración de ajustes (SettingsModel) usando un flujo de datos (Flow).
+    */
 }
