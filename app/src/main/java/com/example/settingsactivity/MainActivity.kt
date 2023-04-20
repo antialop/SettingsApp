@@ -40,10 +40,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     private suspend fun saveVolume(value:Int){
         dataStore.edit {preference ->
             preference[intPreferencesKey(VOLUME_LVL)] = value
+        }
+    }
+
+    private suspend fun saveOptions(key:String, value: Boolean){
+        dataStore.edit { preferences ->
+            preferences[booleanPreferencesKey(key)] = value
         }
     }
 
