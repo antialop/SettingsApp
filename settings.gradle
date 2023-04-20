@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "SettingsActivity"
+rootProject.name = "SettingsApp"
 include ':app'
