@@ -22,6 +22,9 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "se
 class MainActivity : AppCompatActivity() {
     companion object{
         const val  VOLUME_LVL = "volume_lvl"
+        const val KEY_BLUETOOTH = "key_bluetooth"
+        const val KEY_VIBRATION = "key_vibration"
+        const val KEY_DARK_MODE = "key_dark_mode"
     }
     private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +39,23 @@ class MainActivity : AppCompatActivity() {
             Log.i("antia", "EL valor es $value")
             CoroutineScope(Dispatchers.IO).launch {
                 saveVolume(value.toInt())
+            }
+        }
+        binding.switchBluetooth.setOnCheckedChangeListener { _, value ->
+            CoroutineScope(Dispatchers.IO).launch {
+                saveOptions(KEY_BLUETOOTH, value)
+            }
+        }
+
+        binding.switchVibration.setOnCheckedChangeListener { _, value ->
+            CoroutineScope(Dispatchers.IO).launch {
+                saveOptions(KEY_VIBRATION, value)
+            }
+        }
+
+        binding.switchDarkMode.setOnCheckedChangeListener { _, value ->
+            CoroutineScope(Dispatchers.IO).launch {
+                saveOptions(KEY_DARK_MODE, value)
             }
         }
     }
