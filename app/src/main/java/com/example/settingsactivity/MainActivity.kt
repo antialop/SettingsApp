@@ -34,7 +34,16 @@ class MainActivity : AppCompatActivity() {
     private fun initUI() {
         binding.rsVolume.addOnChangeListener{_,value,_ ->
             Log.i("antia", "EL valor es $value")
+            CoroutineScope(Dispatchers.IO).launch {
+                saveVolume(value.toInt())
+            }
+        }
+    }
 
+
+    private suspend fun saveVolume(value:Int){
+        dataStore.edit {preference ->
+            preference[intPreferencesKey(VOLUME_LVL)] = value
         }
     }
 
