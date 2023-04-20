@@ -90,6 +90,12 @@
             android:layout_marginHorizontal="16dp" />
 
     </LinearLayout>
+    <!--Divider-->
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="8dp" />
+
 
 
 </LinearLayout>
